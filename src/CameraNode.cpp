@@ -22,6 +22,7 @@
 #include <libcamera/camera.h>
 #include <libcamera/camera_manager.h>
 #include <libcamera/controls.h>
+#include <libcamera/control_ids.h>
 #include <libcamera/framebuffer.h>
 #include <libcamera/framebuffer_allocator.h>
 #include <libcamera/geometry.h>
@@ -438,6 +439,9 @@ CameraNode::CameraNode(const rclcpp::NodeOptions &options)
   libcamera::ControlList controls_ = camera->controls();
   for (const auto &[id, value] : parameters)
     controls_.set(id, value);
+
+  // 60 fps
+  controls_.set( libcamera::controls::FrameDurationLimits, libcamera::Span<const std::int64_t, 2>({1 , 1}));
 
   // start camera and queue all requests
   if (camera->start(&controls_))
